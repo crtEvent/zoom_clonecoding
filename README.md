@@ -2,8 +2,8 @@
 
 Zoom Clone using WebRTC ans Websockets
 
-# 0. INTRODUCTION
-## 0.2 server setup
+## 0. INTRODUCTION
+### 0.2 server setup
 <details>
 
 1. 프로젝트 초기화
@@ -36,5 +36,27 @@ Zoom Clone using WebRTC ans Websockets
     - app 생성 후 app.listen(3000) : 3000port로 실행
 12. 실행
     - npm run dev
+
+</details>
+
+### 0.3 Frontend Setup
+<details>
+
+1. server.js에 Pug 설정
+2. server.js에 route 설정
+ - ecpress()로 home.pug를 렌더링 함
+3. server.js에 static file 등록
+ - /public 경로에 있는 파일들(현재 app.js)이 static으로 등록
+4. home.pug 수정
+ - script 적용 app.js
+ - html 뼈대 코드 작성
+ - MVP CSS 적용
+5. app.js 수정
+ - 이곳에 js코드 작성함
+ - 테스트 용으로 alert 작성
+6. nodemon 설정 변경
+ - /public 경로의 파일들을 ignore로 지정
+ - ignore: 해당 경로의 파일이 변경되어도 서버가 재시작 되지 않음
+ - front-end가 변경될 때는 server까지 재시작할 필요 없음
 
 </details>

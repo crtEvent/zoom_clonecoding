@@ -58,7 +58,6 @@ Zoom Clone using WebRTC ans Websockets
     - /public 경로의 파일들을 ignore로 지정
     - ignore: 해당 경로의 파일이 변경되어도 서버가 재시작 되지 않음
     - front-end가 변경될 때는 server까지 재시작할 필요 없음
-
 </details>
 
 ### 1. CHAT WITH WEBSOCKETS

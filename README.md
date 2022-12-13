@@ -3,7 +3,7 @@
 Zoom Clone using WebRTC ans Websockets
 
 ### 0. INTRODUCTION
-#### 0.2 server setup
+#### 0.2 Server setup
 <details>
 
 1. 프로젝트 초기화
@@ -61,7 +61,7 @@ Zoom Clone using WebRTC ans Websockets
 </details>
 
 ### 1. CHAT WITH WEBSOCKETS
-#### 1.3 WebSocket Events
+#### 1.2 WebSockets in NodeJS
 <details>
 
 1. catchall url 만들기(server.js 수정)
@@ -81,4 +81,61 @@ Zoom Clone using WebRTC ans Websockets
     - http와 ws를 다 사용할 수 있다(2개의 protocol 다 같은 port를 공유)
     - http서버가 필요한 이유는 views, static files, home, redirection을 사용하기 위함
 
+</details>
+
+#### 1.3 WebSocket Events & 1.4 WebSocket Messages
+<details>
+
+ws를 사용해서 backend와 frontend사이에 connection(연결) 생성
+1. server.js (backend)
+    ```javascript
+    wss.on("connection", (socket) => {
+        console.log("Connection to Browser!✅");
+        socket.on("close", () => console.log("Disconnected from the Browser!❌"));
+        socket.on("message", (message) => {
+            console.log(message.toString('utf8'));
+        });
+        socket.send("hello!");
+    });
+    ```
+    - socket을 받기 위해 connection 연결
+    - server.js에서 console.log는 터미널창에 나타난다
+    - close 이벤트 추가: 서버가 오프라인이 될때(브라우저(탭)이 닫힐때)
+    - message 이벤트 추가: front에서 전달된 메세지 처리
+    - socket.send() : front로 메세지 보내기
+2. app.js (frontend)
+    ```javascript
+    const socket = new WebSocket(`ws://${window.location.host}`);
+
+    socket.addEventListener("open", () => {
+       console.log("Connected to Server!✅");
+    })
+
+    socket.addEventListener("message", (message) => {
+       console.log("New message: ", message.data);
+    });
+
+    socket.addEventListener("close", () => {
+       console.log("Disconnected from Server!❌");
+    });
+
+    setTimeout(() => {
+       socket.send("hello from the browser!");
+    }, 10000); // 10s 뒤에 실행
+    ```
+    - frontend에서 backend로 연결
+    - open 이벤트 추가: 브라우저가 열리면 실행
+    - message 이벤트 추가: backend에서 보낸메지 처리
+    - close 이벤트 추가: 서버엣 연결을 끊은 경우
+    - socket.send(): backend로 메세지 보내기
+- ` (backtick, grave accent, backquoto, 억음부호)
+    - 키보드 숫자 1의 왼쪽에 있는 거(tap키 위에 있는거)
+    - C++이나 Java 같은 프로그램 언어에서는 ', " 과 동일하게 사용하지만, javascript에서는 다른게 쓰인다
+    - 템플릿 리터럴(Template literals): 문자열 안에서 ${}(place holder, 플레이스 홀더)를 쓰기 위해 사용함
+    - 이를 템플릿 리터럴(Template literals)이라고 한다: 정의)내장된 표현식을 허용하는 문자열 리터럴
+    ```javascript
+    console.log("정답: " + answer);
+    console.log(`정답: ${answer}`); // Template literals
+    ```
+- 
 </details>

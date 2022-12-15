@@ -137,5 +137,15 @@ ws를 사용해서 backend와 frontend사이에 connection(연결) 생성
     console.log("정답: " + answer);
     console.log(`정답: ${answer}`); // Template literals
     ```
-- 
+</details>
+
+#### 1.6 Chat Completed
+<details>
+
+user가 보낸 message를 다시 모든 user에게 돌려주는 기능 추가
+1. src/views/home.pug 에 form, input, button, ul 추가
+2. src/public/js/app.js
+    - submit시 input의 내용을 서버에 전달
+3. src/server.js
+    - frontend에서 전달받은 message를 모든 user에게 전달
 </details>

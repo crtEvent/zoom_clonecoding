@@ -149,3 +149,31 @@ user가 보낸 message를 다시 모든 user에게 돌려주는 기능 추가
 3. src/server.js
     - frontend에서 전달받은 message를 모든 user에게 전달
 </details>
+
+#### 1.7 Nicknames-1 & 1.8 Nicknames-2
+<details>
+
+메세지를 ul list에 추가하기
+메세지에 닉네임 추가하기
+1. src/views/home.pug
+    - 닉네임 form 추가
+2. src/public/js/app.js
+    - 닉네임 input값(Javascript Object)을 String 타입(JSON 문자열)으로 변환하는 메서드 추가
+    - 닉네임을 backend로 전달하는 함수 추가(String 타입으로 전달)
+    - backend에서 받은 메세지를 home.pug의 ul list에 추가
+3. src/server.js
+    - frontend에서 받은 messege(JSON 문자열)를 다시 Javascript Object로 변환(const parsedMsg)
+    - 변환된 messege를 분류(switch(parsedMsg.type){})
+    - parsedMsg.type === "nickname" -> socket에 저장
+    - parsedMsg.type === "new_message" -> 닉네임과 함께 forntend에 전달
+<br>
+
+##### 왜 Javascript Object를 String으로 바꿔줘야하는가?
+- 연결하고 싶은 back-end 서버가 javascript 서버가 아닐 수도 있기 때문
+- websocket은 브라우저에 있는 API -> 백엔드에서는 다양한 프로그래밍 언어를 사용할 수 있기 때문에 이 API는 어떠한 판단도 하지 않음
+
+##### socket 안에 정보를 저장 할 수 있다
+```javascript
+socket[] = "data";
+```
+</details>

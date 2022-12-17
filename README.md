@@ -177,3 +177,48 @@ user가 보낸 message를 다시 모든 user에게 돌려주는 기능 추가
 socket[] = "data";
 ```
 </details>
+
+### 2. SOCKETIO
+#### 2.0 SocketIO vs WebSockets
+<details>
+
+socket IO: 실시간, 짧은 대기시간, 양방향, event 기반의 통신을 가능하게 하는 라이브러리(or 프레임워크)
+- 자동 재연결 지원, 연결 끊김 확인, 바이너리 지원
+    - socket IO는 연결이 어떤 이유에서든지 끊어지면, 재연결을 시도
+    - 만약, websocket으로 연결이 안되면, socket IO는 다른 것을 이용해서 연결
+    - websocket은 Socket IO가 실시간, 양방향, event 기반 통신을 제공하는 방법 중 하나
+- 실시간 기능 같은 것들을 더 쉽게 만드는 편리한 코드를 제공
+</details>
+
+#### 2.1 Installing SocketIO
+<details>
+
+1. socketIO 설치
+    - npm i socket.io
+2. src/server.js
+    - socket.io import 
+    ```javascript
+    import { Server } from "socket.io";
+    ```
+    -http server에 socket.io 연결
+    ```javascript
+    const httpServer = http.createServer(app);
+    const wsServer = new Server(httpServer);
+    ```
+    - socket.ot에 connection시 log 출력
+    ```javascript
+    wsServer.on("connection", (socket) => {
+        console.log(socket);
+    })
+    ```
+3. src/public/js/app.js
+    - frontend에도 socket.io 적용
+    ```javascript
+    const socket = io();
+    ```
+4. src/views/home.pug
+    - socket.io script 추가
+    ```javascript
+    script(src="/socket.io/socket.io.js")
+    ```
+</details>

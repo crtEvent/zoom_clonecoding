@@ -222,3 +222,41 @@ socket IO: 실시간, 짧은 대기시간, 양방향, event 기반의 통신을 
     script(src="/socket.io/socket.io.js")
     ```
 </details>
+
+#### 2.2 SocketIO is Amazing
+<details>
+
+1. src/views/home.pug
+    - room name을 입력받을 form, input 생성
+2. src/public/js/app.js
+    - socket.emit()으로 frontend에서 backend로 이벤트 전달
+    - 첫번째 argument에는 event 이름
+        - emit과 on은 같은 이름, 같은 string 이어야 한다
+    - argument는 어떤 object도 다 보낼 수 있다
+    - argument는 여러개 보낼 수 있다(가변인자)
+    - callback 함수(서버에서 호출하는 function)는 맨 마지막 argument에 넣어 줘야 한다
+    ```javascript
+    function backendDone(msg) {
+        console.log(`The backend says: `, msg);
+    }
+
+    function handleRoomSubmit(event) {
+        event.preventDefault();
+        const input = form.querySelector("input");
+        socket.emit("enter_room", input.value, backendDone);
+        input.value = ""; 
+    }
+    ```
+3. src/server.js
+    - socket.on()으로 frontend에서 전달된 이벤트를 받아옴
+    - 첫번째 argument에는 event 이름
+        - emit과 on은 같은 이름, 같은 string 이어야 한다
+    ```javascript
+    socket.on("enter_room", (msg, done) => {
+        setTimeout(() => {
+            done("hello fron the backend");
+        }, 10000);
+    });
+    ```
+
+</details>

@@ -258,5 +258,41 @@ socket IO: 실시간, 짧은 대기시간, 양방향, event 기반의 통신을 
         }, 10000);
     });
     ```
+</details>
 
+#### 2.4 Rooms
+<details>
+
+Room 만들기
+1. src/views/home.pug
+    - room div 추가
+2. src/public/js/app.js
+    - welcome div에서 room을 만들면 welcome div는 사라지고 room div가 나타나도록 수정
+3. src/server.js
+    - frontend에서 생성한 room에 join
+    - frontend의 코드를 실행시키켜 줌
+
+##### Room 만들기 - socket.join(room)
+- 서로 소통을 할 수 있는 socket 그룹
+- socket IO는 기본적으로 room을 제공
+- socket.join(room);
+    - room: string
+    - 주어진 방이나 방 목록에 소켓을 추가
+
+##### socket.rooms: socket이 어떤 방에 있는지 확인
+##### socket.id로 구별
+```javascript
+socket.on("enter_room", (roomName, done) => {
+    console.log(socket.id);
+    console.log(socket.rooms);
+    socket.join(roomName);
+    console.log(socket.rooms);
+    done();
+});
+```
+```
+6i5YzMWw1RNkcaSfAAAD
+Set(1) { '6i5YzMWw1RNkcaSfAAAD' }
+Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
+```
 </details>

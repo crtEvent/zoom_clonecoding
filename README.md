@@ -296,3 +296,44 @@ Set(1) { '6i5YzMWw1RNkcaSfAAAD' }
 Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
 ```
 </details>
+
+#### 2.5 Room Messages
+<details>
+
+방 전체에 메세지 보내기
+
+1. src/public/js/app.js
+
+    ```javascript
+    function addMessage(message) {
+        const ul = room.querySelector("ul");
+        const li = document.createElement("li");
+        li.innerText = message;
+        ul.appendChild(li);
+    }
+
+    socket.on("welcome", () => {
+        addMessage("Someone joined!");
+    });
+    ```
+
+2. src/server.js
+    ```javascript
+    wsServer.on("connection", (socket) => {
+        socket.onAny((event) => {
+            console.log(`Socket Event: ${event}`);
+        });
+
+        socket.on("enter_room", (roomName, done) => {
+            socket.join(roomName);
+            done();
+            socket.to(roomName).emit("welcome"); // 추가된 부분
+        });
+    })
+    ```
+    - server.to(room)
+        - 해당 room에 참가된 클라이언트에게만 event 전달
+    - io.to("room-101").emit("foo", "bar");
+        - foo 이벤트는 room-101 방에 연결된 모든 클라이언트에게 전달됨
+
+</details>

@@ -337,3 +337,60 @@ Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
         - foo 이벤트는 room-101 방에 연결된 모든 클라이언트에게 전달됨
 
 </details>
+
+#### 2.6 Room Notifications
+<details>
+
+방에서 나갔을 때 알림 메세지 보내기
+1. src/public/js/app.js
+    ```javascript
+    socket.on("bye", () => {
+        addMessage("someone left...");
+    });
+    ```
+
+2. src/server.js
+    ```javascript
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach(room => socket.to(room).emit("bye"));
+    });
+    ```
+    - disconnecting은 클라이언트가 접속을 중단했지만, 아직 room을 완전히 나가지는 않은상태.
+    - socket.rooms -> 중복되는 요소가 없는 array인 Set -> forEach 사용 가능
+
+메세지에 닉네임 표시해 주기(본인만)
+1. src/public/js/app.js
+    ```javascript
+    /* 추가된 함수 */
+    function handleMessageSubmit(event) {
+        event.preventDefault();
+        const input = room.querySelector("input");
+        const value = input.value;
+        socket.emit("new_message", value, roomName, () => {
+            addMessage(`You: ${value}`);
+        });
+        input.value = "";
+    }
+
+    function showRoom() {
+        welcome.hidden = true;
+        room.hidden = false;
+        const h3 = room.querySelector("h3");
+        h3.innerText = `Room ${roomName}`;
+
+        /* 추가된 부분 */
+        const form = room.querySelector("form");
+        form.addEventListener("submit", handleMessageSubmit);
+    }
+    ```
+
+2. src/server.js
+    ```javascript
+    socket.on("new_message", (msg, room, done) => {
+        socket.to(room).emit("new_message", msg);
+        done();
+    });
+    ```
+    - 이건 정말 중요해. 꼭 기억해. 이 done 코드는 백엔드에서 실행하지 않아.
+    - 내가 done을 호출했을 때 프론트엔드에서 코드를 실행할꺼야.
+</details>

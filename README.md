@@ -365,11 +365,11 @@ Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
     function handleMessageSubmit(event) {
         event.preventDefault();
         const input = room.querySelector("input");
-        const value = input.value;
-        socket.emit("new_message", value, roomName, () => {
-            addMessage(`You: ${value}`);
+        //const value = input.value;
+        socket.emit("new_message", input.value, roomName, () => {
+            addMessage(`You: ${input.value}`);
+            input.value = "";
         });
-        input.value = "";
     }
 
     function showRoom() {
@@ -393,4 +393,67 @@ Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
     ```
     - 이건 정말 중요해. 꼭 기억해. 이 done 코드는 백엔드에서 실행하지 않아.
     - 내가 done을 호출했을 때 프론트엔드에서 코드를 실행할꺼야.
+</details>
+
+#### 2.7 Nicknames
+<details>
+
+메세지에 닉네임 표시
+1. src/views/home.pug
+    - 닉네임 form 추가
+    - id 지정
+    ```javascript
+    form#name 
+        input(type="text", placeholder="nickname", required)
+        button Send
+    form#msg
+        input(type="text", placeholder="message", required)
+        button Send
+    ```
+2. src/public/js/app.js
+    ```javascript
+    function handleNicknameSubmit(event) {
+        event.preventDefault();
+        const input = room.querySelector("#name input");
+        socket.emit("nickname", input.value);
+    }
+
+    function showRoom() {
+        welcome.hidden = true;
+        room.hidden = false;
+        const h3 = room.querySelector("h3");
+        h3.innerText = `Room ${roomName}`;
+
+        const msgForm = room.querySelector("#msg");
+        const nameForm = room.querySelector("#name");
+        msgForm.addEventListener("submit", handleMessageSubmit);
+        nameForm.addEventListener("submit", handleNicknameSubmit);
+    }
+
+    socket.on("welcome", (user) => {
+        addMessage(`[${user} arrived!]`);
+    });
+
+    socket.on("bye", (user) => {
+        addMessage(`[${user} left...]`);
+    });
+    ```
+3. src/server.js
+    ```javascript
+    wsServer.on("connection", (socket) => {
+        socket["nickname"] = "Anonymous";
+
+        ...
+        socket.on("disconnecting", () => {
+            socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
+        });
+
+        socket.on("new_message", (msg, room, done) => {
+            socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
+            done();
+        });
+
+        socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
+    });
+    ```
 </details>

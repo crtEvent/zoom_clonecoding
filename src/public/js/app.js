@@ -30,11 +30,15 @@ function handleNicknameSubmit(event) {
     socket.emit("nickname", input.value);
 }
 
-function showRoom() {
+function showRoomTitle(newCount) {
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
+}
+
+function showRoom(newCount) {
     welcome.hidden = true;
     room.hidden = false;
-    const h3 = room.querySelector("h3");
-    h3.innerText = `Room ${roomName}`;
+    showRoomTitle(newCount);
 
     const msgForm = room.querySelector("#msg");
     const nameForm = room.querySelector("#name");
@@ -52,11 +56,13 @@ function handleRoomSubmit(event) {
 
 form.addEventListener("submit", handleRoomSubmit);
 
-socket.on("welcome", (user) => {
+socket.on("welcome", (user, newCount) => {
+    showRoomTitle(newCount);
     addMessage(`[${user} arrived!]`);
 });
 
-socket.on("bye", (user) => {
+socket.on("bye", (user, newCount) => {
+    showRoomTitle(newCount);
     addMessage(`[${user} left...]`);
 });
 

@@ -536,6 +536,68 @@ const {
 } = wsServer;
 ```
 [Mozilla: Destructuring Assignment](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+</details>
 
+#### 2.10 User Count
+<details>
+
+유저수를 표시하는 기능 추가
+
+1. src/public/js/app.js
+    - room title을 표시하는 부분을 공통함수로 추출
+    - room title에 유저수 표시
+    ```javascript
+    function showRoomTitle(newCount) {
+        const h3 = room.querySelector("h3");
+        h3.innerText = `Room ${roomName} (${newCount})`;
+    }
+
+    function showRoom(newCount) {
+        ...
+        showRoomTitle(newCount);
+        ...
+    }
+
+    function handleRoomSubmit(event) {
+        ...
+        socket.emit("enter_room", input.value, showRoom);
+        ...
+    }
+
+    socket.on("welcome", (user, newCount) => {
+        showRoomTitle(newCount);
+        addMessage(`[${user} arrived!]`);
+    });
+
+    socket.on("bye", (user, newCount) => {
+        showRoomTitle(newCount);
+        addMessage(`[${user} left...]`);
+    });
+    ```
+
+2. src/server.js
+    - enter_room
+    ```javascript
+    socket.on("enter_room", (roomName, done) => {
+        socket.join(roomName);
+        done(countRoom(roomName));
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
+        wsServer.sockets.emit("room_change", publicRooms());
+    });
+
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach((room) => {
+            socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1)});
+    });
+    ```
+
+##### Optional chaining (?.)
+```javascript
+function countRoom(roomName) {
+    return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+}
+```
+- 참조하는 값이 nullish(null or undifined)이면 반환값이 undefined. (error가 나지 않는다)
+- 에제에서 .get(roomName)이 nullish이면 반환값 = undefined
 
 </details>

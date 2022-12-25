@@ -1,6 +1,6 @@
 # Zoom Clone coding
 
-Zoom Clone using WebRTC ans Websockets
+Zoom Clone using WebRTC and Websockets
 
 ### 0. INTRODUCTION
 #### 0.2 Server setup
@@ -456,4 +456,86 @@ Set(2) { '6i5YzMWw1RNkcaSfAAAD', 'd' }
         socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
     });
     ```
+</details>
+
+#### 2.8 Room Count - 1 & 2.9 Room Count - 2
+<details>
+
+룸 list 보여주기
+1. src/views/home.pug
+    - 룸 list를 보여줄 ul 태그 추가
+2. src/public/js/app.js
+    - 방이 추가되었을 때 이벤트 추가
+    ```javascript
+    socket.on("room_change", (rooms) => {
+        const roomList = welcome.querySelector("ul");
+        roomList.innerHTML = "";
+        if(rooms.length === 0) {
+            return;
+        }
+
+        rooms.forEach((room) => {
+            const li = document.createElement("li");
+            li.innerText = room;
+            roomList.append(li);
+        })
+    });
+    ```
+3. src/server.js
+    - public room을 찾아서 프론트엔드로 전달
+    - console.log(wsServer.sockets.adapter);
+        - rooms(애플리케이션에 있는 모든 room)을 볼 수 있다
+        - socket의 ID(sids)를 볼 수 있다
+        - 만약 room ID를 socket ID에서 찾을 수 있다면 우리가 Private용 room을 찾은거야.(room ID와 socket ID가 같은 경우)
+        - room ID를 socket ID에서 찾을 수 없다면 우리는 Public room을 찾은거야.
+    ```javascript
+    function publicRooms() {
+        const {
+            sockets: {
+                adapter: {sids, rooms}
+            }
+        } = wsServer;
+        const publicRooms = [];
+        rooms.forEach((_, key) => {
+            if(sids.get(key) === undefined) {
+                publicRooms.push(key);
+            }
+        });
+        return publicRooms;
+    }
+
+    socket.on("enter_room", (roomName, done) => {
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome", socket.nickname);
+        wsServer.sockets.emit("room_change", publicRooms());
+    });
+    ...
+    socket.on("disconnect", () => {
+        wsServer.sockets.emit("room_change", publicRooms());
+    });
+    ```
+
+##### Adapter
+- dapter가 기본적으로 하는 일은 다른 서버들 사이에 실시간 어플리케이션을 동기화
+- Adapter는 누가 연결되었는지, 현재 어플리케이션에 room이 얼마나 있는지 알려줄 수 있다
+
+##### Destructuring Assignment (구조 분해 할당)
+- 배열이나 객체의 속성을 해체하여 그 값을 개별 변수에 담을 수 있게 하는 JavaScript 표현식
+```javascript
+/* 아래 3개가 다 같은 것*/
+const sids = wsServer.sockets.adapter.sids;
+const rooms = wsServer.sockets.adapter.rooms;
+
+const { rooms, sids } = wsServer.sockets.adapter;
+
+const {
+    sockets: {
+        adapter: {sids, rooms}
+    }
+} = wsServer;
+```
+[Mozilla: Destructuring Assignment](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+
+
 </details>

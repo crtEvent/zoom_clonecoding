@@ -535,7 +535,7 @@ const {
     }
 } = wsServer;
 ```
-[Mozilla: Destructuring Assignment](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+<a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" target="_blank">Mozilla: Destructuring Assignment</a>
 </details>
 
 #### 2.10 User Count
@@ -599,5 +599,36 @@ function countRoom(roomName) {
 ```
 - 참조하는 값이 nullish(null or undifined)이면 반환값이 undefined. (error가 나지 않는다)
 - 에제에서 .get(roomName)이 nullish이면 반환값 = undefined
+<a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Optional_chaining" target="_blank">Mozilla: Optional chaining</a>
+</details>
 
+#### 2.11 Admin Panel
+<details>
+
+1. socket.io/admin-ui 설치
+    - <a href="https://socket.io/docs/v4/admin-ui/" target="_blank">Admin UI</a>
+    ```text
+    npm i @socket.io/admin-ui
+    ```
+    - VS에서는 에러남
+    - 식에서 변수를 참조하는 데 스플랫(splat) 연산자 '@'를 사용할 수 없습니다.
+    윈도우 터미널을 사용하거나 아래의 명령어로 대체
+    ```text
+    npm i "@socket.io/admin-ui"
+    ```
+2. src/server.js
+    ```javascript
+    import { Server } from "socket.io";
+    import { instrument } from "@socket.io/admin-ui";
+
+    const wsServer = new Server(httpServer, {
+    cors: {
+        origin: ["https://admin.socket.io"],
+        credentials: true
+    }
+    });
+    instrument(wsServer, {
+        auth: false,
+    });
+    ```
 </details>

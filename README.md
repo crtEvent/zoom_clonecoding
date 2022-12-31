@@ -710,3 +710,144 @@ mute, camera on/off 버튼 추가
     ```
 
 </details>
+
+#### 3.1 Call Controls
+<details>
+
+mute, camera on/off 기능 추가
+1. src/public/js/app.js
+    ```javascript
+    function handleMuteClick() {
+        myStream
+            .getAudioTracks()
+            .forEach((track) => (
+                track.enabled = !track.enabled
+            ));
+
+        if(!muted) {
+            muteBtn.innerText = "Unmute";
+            muted = true;
+        } else {
+            muteBtn.innerText = "Mute";
+            muted = false;
+        }
+    }
+
+    function handleCameraClick() {
+        myStream
+            .getVideoTracks()
+            .forEach((track) => (
+                track.enabled = !track.enabled
+            ));
+
+        if(cameraOff) {
+            cameraBtn.innerText = "Turn Camera Off";
+            cameraOff = false;
+        } else {
+            cameraBtn.innerText = "Turn Camera On";
+            cameraOff = true;
+        }
+    }
+    ```
+카메라 종류 변경 기능 추가
+1. src/views/home.pug
+    ```javascript
+    select#cameras
+    ```
+2. src/public/js/app.js
+    ```javascript
+    async function getCameras() {
+        try{
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const cameras = devices.filter((device) => device.kind === "videoinput");
+            console.log(cameras);
+            cameras.forEach((camera) => {
+                const option = document.createElement("option");
+                option.value = camera.deviceId;
+                option.innerText = camera.label;
+                camerasSelect.appendChild(option);
+            });
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    getCameras();
+    ```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>
+
+#### 
+<details>
+
+```javascript
+```
+</details>

@@ -632,3 +632,81 @@ function countRoom(roomName) {
     });
     ```
 </details>
+
+### 3 VIDEO CALL
+#### 3.0 User Video
+<details>
+
+기존 내용 지우기
+    - src/public/js/app.js, src/server.js, src/views/home.pug
+유저로부터 비디오를 가져와 화면에 비디오 보여주기
+1. src/views/home.pug
+    ```javascript
+    main 
+        video#myFace(autoplay, playsinline, width="400", height="400")
+    ```
+2. src/public/js/app.js
+    ```javascript
+    const myFace = document.getElementById("myFace");
+
+    let myStream;
+
+    async function getMidea() {
+        try {
+            myStream = await navigator.mediaDevices.getUserMedia(
+                {
+                    audio:true,
+                    video:true,
+                }
+            );
+            myFace.srcObject = myStream;
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    getMidea();
+    ```
+
+mute, camera on/off 버튼 추가
+1. src/views/home.pug
+    ```javascript
+    main 
+        div#myStream
+            video#myFace(autoplay, playsinline, width="400", height="400")
+            button#mute Mute
+            button#camera Turn Camera Off
+    ```
+2. src/public/js/app.js
+    ```javascript
+    const muteBtn = document.getElementById("mute");
+    const cameraBtn = document.getElementById("camera");
+
+    let muted = false;
+    let cameraOff = false;
+
+    function handleMuteClick() {
+        if(!muted) {
+            muteBtn.innerText = "Unmute";
+            muted = true;
+        } else {
+            muteBtn.innerText = "Mute";
+            muted = false;
+        }
+    }
+
+    function handleCameraClick() {
+        if(cameraOff) {
+            cameraBtn.innerText = "Turn Camera Off";
+            cameraOff = false;
+        } else {
+            cameraBtn.innerText = "Turn Camera On";
+            cameraOff = true;
+        }
+    }
+
+    muteBtn.addEventListener("click", handleMuteClick);
+    cameraBtn.addEventListener("click", handleCameraClick);
+    ```
+
+</details>
